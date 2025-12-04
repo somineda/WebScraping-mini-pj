@@ -1,4 +1,4 @@
-from datetime import date as date_type
+from datetime import date as date_type, datetime
 
 from pydantic import BaseModel
 
@@ -21,6 +21,8 @@ class DiaryResponse(BaseModel):
     content: str
     date: date_type
     user_id: int
+    created_at: datetime
+    updated_at: datetime
 
     class Config:
         from_attributes = True
