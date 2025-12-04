@@ -1,0 +1,94 @@
+from tortoise import BaseDBAsyncClient
+
+RUN_IN_TRANSACTION = True
+
+
+async def upgrade(db: BaseDBAsyncClient) -> str:
+    return """
+        CREATE TABLE IF NOT EXISTS "daily_questions" (
+    "id" SERIAL NOT NULL PRIMARY KEY,
+    "created_at" TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "updated_at" TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "content" TEXT NOT NULL,
+    "category" VARCHAR(50)
+);
+CREATE TABLE IF NOT EXISTS "quotes" (
+    "id" SERIAL NOT NULL PRIMARY KEY,
+    "created_at" TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "updated_at" TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "content" TEXT NOT NULL,
+    "author" VARCHAR(100)
+);
+CREATE TABLE IF NOT EXISTS "token_blacklist" (
+    "id" SERIAL NOT NULL PRIMARY KEY,
+    "created_at" TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "updated_at" TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "token" TEXT NOT NULL,
+    "expires_at" TIMESTAMPTZ NOT NULL
+);
+CREATE TABLE IF NOT EXISTS "users" (
+    "id" SERIAL NOT NULL PRIMARY KEY,
+    "created_at" TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "updated_at" TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "email" VARCHAR(255) NOT NULL UNIQUE,
+    "username" VARCHAR(100) NOT NULL,
+    "password" VARCHAR(255) NOT NULL,
+    "is_active" BOOL NOT NULL DEFAULT True
+);
+CREATE TABLE IF NOT EXISTS "diaries" (
+    "id" SERIAL NOT NULL PRIMARY KEY,
+    "created_at" TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "updated_at" TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "title" VARCHAR(200) NOT NULL,
+    "content" TEXT NOT NULL,
+    "date" DATE NOT NULL,
+    "user_id" INT NOT NULL REFERENCES "users" ("id") ON DELETE CASCADE
+);
+CREATE TABLE IF NOT EXISTS "quote_bookmarks" (
+    "id" SERIAL NOT NULL PRIMARY KEY,
+    "created_at" TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "updated_at" TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "quote_id" INT NOT NULL REFERENCES "quotes" ("id") ON DELETE CASCADE,
+    "user_id" INT NOT NULL REFERENCES "users" ("id") ON DELETE CASCADE,
+    CONSTRAINT "uid_quote_bookm_user_id_fa8e18" UNIQUE ("user_id", "quote_id")
+);
+CREATE TABLE IF NOT EXISTS "aerich" (
+    "id" SERIAL NOT NULL PRIMARY KEY,
+    "version" VARCHAR(255) NOT NULL,
+    "app" VARCHAR(100) NOT NULL,
+    "content" JSONB NOT NULL
+);"""
+
+
+async def downgrade(db: BaseDBAsyncClient) -> str:
+    return """
+        """
+
+
+MODELS_STATE = (
+    "eJztW21z2jgQ/isMn9oZrpPQ0Hb6DSek5ZpAmzh3nWYyHmEroMGWiC03YTr895PkN/m1wO"
+    "CLneobrHZt7bPS6tlF/Oo6xIK29+YMIHv9zYceRQR3P3Z+dTFwIPtQrNDrdMFqlQxzAQUz"
+    "W1hYXNV4CHXFGJh51AUmZcP3wPYgE1nQM120Ct+HfdvmQmIyRYTnicjHiD3KoGQO6QK6bO"
+    "D2jokRtuAT9KKvq6Vxj6BtpaaOLP5uITfoeiVkY0zPhSJ/28wwie07OFFeremC4FgbYcql"
+    "c4ihCyjkj6euz6fPZxc6HHkUzDRRCaYo2VjwHvg2ldzdEgOTwcjwY7PxhINz/pa/+scn70"
+    "8+vH138oGpiJnEkvebwL3E98BQIDDRuxsxDigINASMCW6mC7mzBqB5/M7YCEUOLAYxbZkB"
+    "0wpN30QfstBGQFZhGwkScJMFdSB0mQ/WFNvrMHAVUOrjy9G1Prz8yj1xPO/BFhAN9REf6Q"
+    "vpOiN99e41lxO2HYLtEj+k8+9Y/9zhXzs/ppORQJB4dO6KNyZ6+o8unxPwKTEweTSAJa2x"
+    "SBoBwzSTwPora8/Api1VYJ81sOHkpQ1LMIW4IKg6fCpJd5JJJpoMsmbGrypeo+96KlSTf4"
+    "ZXp5+HV68uh99fp8J1MZ18itSTWE1OL6aaSIsSqsz7OXHXeVhPF8AtgVWy2QvXMNr/57Zw"
+    "wJNhQzynC/Z1cFQBcwTq4Ciz1CO4+2Jos+FH8v1SOly4YAbM5SNwLSM3QvqkTDc/5PSdrA"
+    "RgMBfYcA/5/CPSgoC7LmQzYqCaxTAVBBV7UexFHXKKvajA1sdeKKI23OWQjQ3awlzSR2z/"
+    "aJszlmmVHrJibKMoYO0UkKeE4mRTDGmkX5ViWocsTxEZXHwPusZOBEWy+D1LaQYkhyAqOS"
+    "KcxjAP4DlxIZrjL3AtcByzGQFsFi2qkMrehI9pHn6baA1E0uQ4cMFjzHjlpcHcY05BGhwA"
+    "w+vT4Rlbes9TPHzziZhHrngIBnpVxcMDV1G1g6odFMVUtYMKrOp8tov2MsQXpICclJdkiU"
+    "Uru57HW5VkxxUl2fHRro3PBO4ZIUsHuEsvj7gWmp5/uYI2iH57LWaCgpdo4bMavZBzlHBT"
+    "O5GLcSkjdDJwvyF2Ripgh2V4t3FdIF7VvVOUT1E+xQwU5ftTA5ujfEEK3indySZ/UvdJte"
+    "z2AE217A7Qsstt2APAFvfd2oubnIia1OvUyRJizWbPspFHuwUcOaNRSZIp1zVmKWXVBm1Y"
+    "mlOc+MVTJ8WJX2hg81coeMbdpQkaG6gWaHELFD6tEAvPHjslbdnOndKSnRG5nct5Dbl/Ko"
+    "h+AZmKCoByCsUJtvr9WBGnVmWNF3O+KuL0QgObI07QAcje5YfO2OAwxKn2hJe+eToYbHPz"
+    "dDAov3nKx/KNRfF5BxRlm7Yw0Jp+MZahXAHPeyRuweFbDqVs004oa1mViBFwk6KfBctSI8"
+    "SGAJeQGdkug+eMGdYFaLzvD83Xten0IpWLtXG2/Lm51EZsrQp4mRIKWpIl3fBtLjRI/53a"
+    "/zpD/B+t5q3f0msM8gpUtzpqvdUxhC4yF92C6ioc6VXVVyDRUQXWITN7zQXWT1YWh9tl2w"
+    "NSMlHnY3LFj22NHUAM1dsJYC1crfTm6d/X08muN09vMHPw1kIm7XX4T2Z3zYS1AkXudXUT"
+    "Nttv7aVrOf4A7bn/Or75Dyoqzg4="
+)

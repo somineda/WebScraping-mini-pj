@@ -1,0 +1,44 @@
+[dependency-groups]
+dev = [
+    "httpx>=0.28.1",
+    "pytest>=8.4.2",
+    "pytest-asyncio>=1.2.0",
+    "ruff>=0.14.7",
+]
+prod = [
+    "aerich>=0.9.2",
+    "asyncpg>=0.31.0",
+    "fastapi>=0.123.5",
+    "pydantic-settings>=2.11.0",
+    "python-dotenv>=1.2.1",
+    "tortoise-orm>=0.25.1",
+    "uvicorn[standard]>=0.38.0",
+]
+[tool.ruff]
+target-version = "py311"
+line-length = 88
+exclude = [".venv", "__pycache__", ".git"]
+
+[tool.ruff.lint]
+select = [
+    "E",      # pycodestyle errors
+    "W",      # pycodestyle warnings
+    "F",      # pyflakes
+    "I",      # isort
+    "B",      # flake8-bugbear
+    "C4",     # flake8-comprehensions
+    "UP",     # pyupgrade
+]
+ignore = ["E501"]
+
+[tool.ruff.lint.isort]
+known-first-party = ["app"]
+
+[tool.ruff.format]
+quote-style = "double"
+indent-style = "space"
+
+[tool.aerich]
+tortoise_orm = "app.db.database.TORTOISE_ORM"
+location = "./migrations"
+src_folder = "./."
