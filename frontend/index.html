@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head><link rel="icon" href="data:,">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>WSMINI - 나만의 일기장</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script defer src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <style>
+        body { font-family: 'Noto Sans KR', sans-serif; }
+    </style>
+</head>
+<body class="bg-gradient-to-br from-indigo-100 via-purple-50 to-pink-100 min-h-screen">
+    <div x-data="authApp()" class="min-h-screen flex items-center justify-center p-4">
+        <div class="bg-white rounded-2xl shadow-xl w-full max-w-md p-8">
+            <!-- 로고 -->
+            <div class="text-center mb-8">
+                <h1 class="text-3xl font-bold bg-gradient-to-r from-indigo-600 to-purple-600 bg-clip-text text-transparent">
+                    ✨ WSMINI
+                </h1>
+                <p class="text-gray-500 mt-2">나만의 일기장</p>
+            </div>
+
+            <!-- 탭 -->
+            <div class="flex mb-6 bg-gray-100 rounded-lg p-1">
+                <button 
+                    @click="tab = 'login'"
+                    :class="tab === 'login' ? 'bg-white shadow' : ''"
+                    class="flex-1 py-2 rounded-lg transition-all duration-200 font-medium"
+                >
+                    로그인
+                </button>
+                <button 
+                    @click="tab = 'register'"
+                    :class="tab === 'register' ? 'bg-white shadow' : ''"
+                    class="flex-1 py-2 rounded-lg transition-all duration-200 font-medium"
+                >
+                    회원가입
+                </button>
+            </div>
+
+            <!-- 에러 메시지 -->
+            <div x-show="error" x-transition class="bg-red-50 text-red-600 p-3 rounded-lg mb-4 text-sm">
+                <span x-text="error"></span>
+            </div>
+
+            <!-- 성공 메시지 -->
+            <div x-show="success" x-transition class="bg-green-50 text-green-600 p-3 rounded-lg mb-4 text-sm">
+                <span x-text="success"></span>
+            </div>
+
+            <!-- 로그인 폼 -->
+            <form x-show="tab === 'login'" @submit.prevent="login" class="space-y-4">
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">이메일</label>
+                    <input 
+                        type="email" 
+                        x-model="loginForm.email"
+                        class="w-full px-4 py-3 border border-gray-200 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition"
+                        placeholder="example@email.com"
+                        required
+                    >
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">비밀번호</label>
+                    <input 
+                        type="password" 
+                        x-model="loginForm.password"
+                        class="w-full px-4 py-3 border border-gray-200 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition"
+                        placeholder="••••••••"
+                        required
+                    >
+                </div>
+                <button 
+                    type="submit"
+                    :disabled="loading"
+                    class="w-full py-3 bg-gradient-to-r from-indigo-600 to-purple-600 text-white rounded-lg font-medium hover:opacity-90 transition disabled:opacity-50"
+                >
+                    <span x-show="!loading">로그인</span>
+                    <span x-show="loading">로그인 중...</span>
+                </button>
+            </form>
+
+            <!-- 회원가입 폼 -->
+            <form x-show="tab === 'register'" @submit.prevent="register" class="space-y-4">
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">이메일</label>
+                    <input 
+                        type="email" 
+                        x-model="registerForm.email"
+                        class="w-full px-4 py-3 border border-gray-200 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition"
+                        placeholder="example@email.com"
+                        required
+                    >
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">닉네임</label>
+                    <input 
+                        type="text" 
+                        x-model="registerForm.username"
+                        class="w-full px-4 py-3 border border-gray-200 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition"
+                        placeholder="닉네임"
+                        required
+                    >
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">비밀번호</label>
+                    <input 
+                        type="password" 
+                        x-model="registerForm.password"
+                        class="w-full px-4 py-3 border border-gray-200 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition"
+                        placeholder="••••••••"
+                        required
+                    >
+                </div>
+                <button 
+                    type="submit"
+                    :disabled="loading"
+                    class="w-full py-3 bg-gradient-to-r from-indigo-600 to-purple-600 text-white rounded-lg font-medium hover:opacity-90 transition disabled:opacity-50"
+                >
+                    <span x-show="!loading">회원가입</span>
+                    <span x-show="loading">가입 중...</span>
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        const API_URL = 'http://127.0.0.1:8000/api/v1';
+
+        function authApp() {
+            return {
+                tab: 'login',
+                loading: false,
+                error: '',
+                success: '',
+                loginForm: { email: '', password: '' },
+                registerForm: { email: '', username: '', password: '' },
+
+                async login() {
+                    this.loading = true;
+                    this.error = '';
+                    try {
+                        const res = await fetch(`${API_URL}/auth/login`, {
+                            method: 'POST',
+                            headers: { 'Content-Type': 'application/json' },
+                            body: JSON.stringify(this.loginForm)
+                        });
+                        const data = await res.json();
+                        if (!res.ok) throw new Error(data.detail || '로그인 실패');
+                        
+                        localStorage.setItem('token', data.access_token);
+                        window.location.href = 'pages/dashboard.html';
+                    } catch (e) {
+                        this.error = e.message;
+                    } finally {
+                        this.loading = false;
+                    }
+                },
+
+                async register() {
+                    this.loading = true;
+                    this.error = '';
+                    this.success = '';
+                    try {
+                        const res = await fetch(`${API_URL}/auth/register`, {
+                            method: 'POST',
+                            headers: { 'Content-Type': 'application/json' },
+                            body: JSON.stringify(this.registerForm)
+                        });
+                        const data = await res.json();
+                        if (!res.ok) throw new Error(data.detail || '회원가입 실패');
+                        
+                        this.success = '회원가입 성공! 로그인해주세요.';
+                        this.tab = 'login';
+                        this.registerForm = { email: '', username: '', password: '' };
+                    } catch (e) {
+                        this.error = e.message;
+                    } finally {
+                        this.loading = false;
+                    }
+                }
+            }
+        }
+    </script>
+</body>
+</html>
