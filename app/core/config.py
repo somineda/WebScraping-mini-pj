@@ -21,6 +21,11 @@ class Settings(BaseSettings):
     DB_NAME: str = ""
     DATABASE_URL: str = ""
 
+    # JWT
+    SECRET_KEY: str = "your-secret-key"
+    ALGORITHM: str = "HS256"
+    ACCESS_TOKEN_EXPIRE_MINUTES: int = 30
+
     @property
     def db_url(self) -> str:
         if self.DATABASE_URL:

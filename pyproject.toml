@@ -9,8 +9,10 @@ prod = [
     "aerich>=0.9.2",
     "asyncpg>=0.31.0",
     "fastapi>=0.123.5",
+    "passlib[bcrypt]>=1.7.4",
     "pydantic-settings>=2.11.0",
     "python-dotenv>=1.2.1",
+    "python-jose[cryptography]>=3.5.0",
     "tortoise-orm>=0.25.1",
     "uvicorn[standard]>=0.38.0",
 ]
