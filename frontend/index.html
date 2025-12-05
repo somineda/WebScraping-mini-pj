@@ -128,8 +128,7 @@
     </div>
 
     <script>
-        const API_URL = 'http://127.0.0.1:8000/api/v1';
-
+        const API_URL = '/api/v1';
         function authApp() {
             return {
                 tab: 'login',
@@ -152,7 +151,7 @@
                         if (!res.ok) throw new Error(data.detail || '로그인 실패');
                         
                         localStorage.setItem('token', data.access_token);
-                        window.location.href = 'pages/dashboard.html';
+                        window.location.href = '/dashboard';
                     } catch (e) {
                         this.error = e.message;
                     } finally {

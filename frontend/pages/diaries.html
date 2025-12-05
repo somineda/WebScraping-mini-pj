@@ -17,12 +17,12 @@
         <!-- 네비게이션 -->
         <nav class="bg-white shadow-sm sticky top-0 z-50">
             <div class="max-w-4xl mx-auto px-4 py-3 flex justify-between items-center">
-                <a href="dashboard.html" class="text-xl font-bold bg-gradient-to-r from-lime-500 to-emerald-500 bg-clip-text text-transparent">
+                <a href="/dashboard" class="text-xl font-bold bg-gradient-to-r from-lime-500 to-emerald-500 bg-clip-text text-transparent">
                     🌿 오늘의 일기
                 </a>
                 <div class="flex items-center gap-4">
-                    <a href="dashboard.html" class="text-sm text-gray-500 hover:text-emerald-600">대시보드</a>
-                    <a href="bookmarks.html" class="text-sm text-gray-500 hover:text-emerald-600">북마크</a>
+                    <a href="/dashboard" class="text-sm text-gray-500 hover:text-emerald-600">대시보드</a>
+                    <a href="/bookmarks" class="text-sm text-gray-500 hover:text-emerald-600">북마크</a>
                     <button @click="logout" class="text-sm text-gray-500 hover:text-red-500">로그아웃</button>
                 </div>
             </div>
@@ -52,7 +52,7 @@
                 <div x-show="diaries.length === 0" class="text-center py-16 text-gray-400">
                     <p class="text-4xl mb-4">📝</p>
                     <p>아직 작성한 일기가 없어요.</p>
-                    <a href="dashboard.html" class="text-emerald-600 hover:underline mt-2 inline-block">첫 번째 일기 작성하기 →</a>
+                    <a href="/dashboard" class="text-emerald-600 hover:underline mt-2 inline-block">첫 번째 일기 작성하기 →</a>
                 </div>
             </div>
         </main>
@@ -94,7 +94,7 @@
     </div>
 
     <script>
-        const API_URL = 'http://127.0.0.1:8000/api/v1';
+        const API_URL = '/api/v1';
 
         function diariesApp() {
             return {
@@ -105,7 +105,7 @@
 
                 async init() {
                     if (!localStorage.getItem('token')) {
-                        window.location.href = '../index.html';
+                        window.location.href = '/';
                         return;
                     }
                     await this.getDiaries();
@@ -170,7 +170,7 @@
 
                 logout() {
                     localStorage.removeItem('token');
-                    window.location.href = '../index.html';
+                    window.location.href = '/';
                 }
             }
         }

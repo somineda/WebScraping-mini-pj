@@ -17,7 +17,7 @@
         <!-- 네비게이션 -->
         <nav class="bg-white shadow-sm sticky top-0 z-50">
             <div class="max-w-6xl mx-auto px-4 py-3 flex justify-between items-center">
-                <a href="dashboard.html" class="text-xl font-bold bg-gradient-to-r from-lime-500 to-emerald-500 bg-clip-text text-transparent">
+                <a href="/dashboard" class="text-xl font-bold bg-gradient-to-r from-lime-500 to-emerald-500 bg-clip-text text-transparent">
                     🌿 오늘의 일기
                 </a>
                 <div class="flex items-center gap-4">
@@ -92,7 +92,7 @@
             <section class="mt-8">
                 <div class="flex justify-between items-center mb-4">
                     <h2 class="text-lg font-bold text-gray-800">📚 내 일기</h2>
-                    <a href="diaries.html" class="text-sm text-emerald-600 hover:underline">전체보기 →</a>
+                    <a href="/diaries" class="text-sm text-emerald-600 hover:underline">전체보기 →</a>
                 </div>
                 <div class="grid md:grid-cols-3 gap-4">
                     <template x-for="diary in diaries.slice(0, 3)" :key="diary.id">
@@ -121,7 +121,7 @@
     </div>
 
     <script>
-        const API_URL = 'http://127.0.0.1:8000/api/v1';
+        const API_URL = '/api/v1';
 
         function dashboardApp() {
             return {
@@ -139,7 +139,7 @@
                 async init() {
                     const token = localStorage.getItem('token');
                     if (!token) {
-                        window.location.href = '../index.html';
+                        window.location.href = '/';
                         return;
                     }
                     await this.getUser();
@@ -243,7 +243,7 @@
 
                 logout() {
                     localStorage.removeItem('token');
-                    window.location.href = '../index.html';
+                    window.location.href = '/';
                 }
             }
         }
